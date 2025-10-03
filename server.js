@@ -15,7 +15,9 @@ app.use(
   }),
 );
 app.use(express.json());
-
+app.get('/', (req, res) => {
+    res.send('API is running!');
+});
 // Routes
 app.use('/api/travel', travelRoutes);
 

@@ -2,6 +2,7 @@ const { generateTravelPlan } = require('../services/travelService');
 
 const createTravelPlan = async (req, res) => {
   try {
+    console.log(2);
     const { destination, passport, start_date, end_date, budget } = req.body;
     const plan = await generateTravelPlan({ destination, passport, start_date, end_date, budget });
     res.json({ success: true, data: plan });
