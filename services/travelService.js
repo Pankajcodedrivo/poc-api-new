@@ -7,21 +7,23 @@ const generateTravelPlan = async ({ destination, passport, start_date, end_date,
   const end = new Date(end_date);
   const tripLength = Math.ceil((end - start) / (1000 * 60 * 60 * 24));
 
-  const systemPrompt = `
+const systemPrompt = `
 You are a structured travel assistant.
 Given: Destination, Passport, Start Date, End Date, Budget.
 
-Steps:
-1. Calculate trip length in days.
-2. Provide clear sections in this order:
-   - Visa & Entry Requirements (with official government links)
-   - Budget Breakdown (total & per day in local currency and USD)
-   - Local Apps / eSIM suggestions
-   - Currency info & exchange tips
-   - Safety tips
-   - Mini Itinerary (1–3 days with highlights)
+Output a JSON object ONLY with these fields:
 
-Output must be formatted with headings and bullet points where useful.
+{
+  "visa": "HTML string with headings, paragraphs, links",
+  "budget": { "totalUSD": number, "perDayUSD": number, "perDayJPY": number, "breakdown": { "accommodation": number, "food": number, "transportation": number, "activities": number,"stay":number, } },
+  "local": { "apps": ["string"], "eSIM": ["string"] },
+  "currency": { "localCurrency": "string", "exchangeTips": ["string"] },
+  "safety": { "generalSafety": "string", "emergencyNumbers": { "police": number, "ambulanceFire": number }, "travelInsurance": "string" },
+  "mini": ["string"] // dynamic number of days based on trip length
+}
+
+- The "mini" array must match the number of trip days.
+- Do not include any extra text outside JSON.
 `;
 
   const userMessage = `
@@ -32,14 +34,13 @@ Budget: $${budget}
 `;
 
   const response = await client.chat.completions.create({
-    model: 'gpt-4.1-mini',
+      model: "gpt-4o-mini",
     messages: [
       { role: 'system', content: systemPrompt },
       { role: 'user', content: userMessage }
     ]
   });
-
-  return response.choices[0].message.content;
+   return JSON.parse(response.choices[0].message.content);
 };
 
 module.exports = { generateTravelPlan };
