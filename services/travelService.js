@@ -8,57 +8,45 @@ async function generateTravelPlan({ destination, passport, start_date, end_date,
   const start = new Date(start_date);
   const end = new Date(end_date);
   const tripLength = Math.ceil((end - start) / (1000 * 60 * 60 * 24));
-
-  // Get live exchange rates (USD → others)
-  const exchangeRates = await getExchangeRates("USD");
-  
   const systemPrompt = `
-You are a structured travel assistant.
-Given: Destination, Passport, Start Date, End Date, Budget, and Exchange Rates.
+  You are a structured travel assistant.
+  Given: Destination, Passport, Start Date, End Date, Budget, and Exchange Rate.
 
-Return ONLY a JSON object matching:
+  Return ONLY a JSON object matching:
 
-{
-  "visa": "HTML string with headings, paragraphs, and official links only (use target='_blank' for all links)",
-  "budget": {
-    "totalUSD": number,
-    "totalLocal": number,
-    "perDayUSD": number,
-    "perDayLocal": number,
-    "breakdown": {
-      "accommodationUSD": number,
-      "accommodationLocal": number,
-      "foodUSD": number,
-      "foodLocal": number,
-      "transportationUSD": number,
-      "transportationLocal": number,
-      "activitiesUSD": number,
-      "activitiesLocal": number,
-      "stayUSD": number,
-      "stayLocal": number
-    }
-  },
-  "local": { "apps": ["string"], "eSIM": ["string"] },
-  "currency": { "localCurrency": "string", "exchangeTips": ["string"] },
-  "safety": { "generalSafety": "string", "emergencyNumbers": { "police": number, "ambulanceFire": number }, "travelInsurance": "string" },
-  "mini": ["string"]
-}
+  {
+    "visa": "HTML string with headings, paragraphs, and official links only (use target='_blank' for all links)",
+    "budget": {
+      "totalUSD": number,
+      "perDayUSD": number,
+      "breakdown": {
+        "accommodation": number,
+        "food": number,
+        "transportation": number,
+        "activities": number,
+        "stay": number
+      }
+    },
+    "local": { "apps": ["string"], "eSIM": ["string"] },
+    "currency": { "localCurrency": "string", "exchangeRate": number, "exchangeTips": ["string"] },
+    "safety": { "generalSafety": "string", "emergencyNumbers": { "police": number, "ambulanceFire": number }, "travelInsurance": "string" },
+    "mini": ["string"]
+  }
 
-Rules:
-- "mini" array must match trip length.
-- Convert all USD amounts → local currency using provided exchange rates.
-- For "visa", include official embassy links with target="_blank".
-- "local.apps" and "local.eSIM" must be country-specific.
-- Output JSON only, no extra text.
-`;
-
-  const userMessage = `
-Destination: ${destination}
-Passport: ${passport}
-Dates: ${start_date} to ${end_date} (${tripLength} days)
-Budget: $${budget}
-Live Exchange Rates (USD base): ${JSON.stringify(exchangeRates)}
-`;
+  Rules:
+  - "mini" array must match trip length.
+  - All amounts are in USD only.
+  - "local.apps" and "local.eSIM" must be country-specific.
+  - Include the local currency and live exchange rate as provided.
+  - For "visa", include official embassy links with target="_blank".
+  - Output JSON only, no extra text.
+  `;
+    const userMessage = `
+  Destination: ${destination}
+  Passport: ${passport}
+  Dates: ${start_date} to ${end_date} (${tripLength} days)
+  Budget: $${budget}
+  `;
 
   const response = await client.chat.completions.create({
     model: "gpt-4o-mini",
