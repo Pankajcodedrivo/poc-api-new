@@ -40,38 +40,44 @@ const sendTravelPlanEmail = async (req, res) => {
     }
 
     // Convert the TravelResult object to HTML
+    // Convert TravelResult object to HTML with local currency
     const htmlContent = `
       <h2>Travel Planner Results</h2>
+
       <h3>Visa & Entry</h3>
       <p>${data.visa}</p>
+
       <h3>Budget</h3>
       <ul>
-        <li>Accommodation: $${data.budget.breakdown.accommodation}</li>
-        <li>Food: $${data.budget.breakdown.food}</li>
-        <li>Transportation: $${data.budget.breakdown.transportation}</li>
-        <li>Activities: $${data.budget.breakdown.activities}</li>
-        <li>Stay: $${data.budget.breakdown.stay}</li>
+        <li>Accommodation: $${data.budget.breakdown.accommodationUSD} (~${data.budget.breakdown.accommodationLocal} ${data.currency.localCurrency})</li>
+        <li>Food: $${data.budget.breakdown.foodUSD} (~${data.budget.breakdown.foodLocal} ${data.currency.localCurrency})</li>
+        <li>Transportation: $${data.budget.breakdown.transportationUSD} (~${data.budget.breakdown.transportationLocal} ${data.currency.localCurrency})</li>
+        <li>Activities: $${data.budget.breakdown.activitiesUSD} (~${data.budget.breakdown.activitiesLocal} ${data.currency.localCurrency})</li>
+        <li>Stay: $${data.budget.breakdown.stayUSD} (~${data.budget.breakdown.stayLocal} ${data.currency.localCurrency})</li>
       </ul>
-      <p>Total / Day: $${data.budget.perDayUSD} USD (~${data.budget.perDayJPY} JPY)</p>
-      <p>Total Trip: $${data.budget.totalUSD} USD</p>
+      <p>Total / Day: $${data.budget.perDayUSD} (~${data.budget.perDayLocal} ${data.currency.localCurrency})</p>
+      <p>Total Trip: $${data.budget.totalUSD}</p>
+
       <h3>Local Tools & Connectivity</h3>
       <p>Apps: ${data.local.apps.join(", ")}</p>
       <p>eSIMs: ${data.local.eSIM.join(", ")}</p>
+
       <h3>Currency & Exchange Tips</h3>
       <p>Local Currency: ${data.currency.localCurrency}</p>
       <ul>
         ${data.currency.exchangeTips.map(tip => `<li>${tip}</li>`).join("")}
       </ul>
+
       <h3>Safety & Emergency</h3>
       <p>${data.safety.generalSafety}</p>
-      <p>Emergency Numbers - Police: ${data.safety.emergencyNumbers.police}, Ambulance/Fire: ${data.safety.emergencyNumbers.ambulanceFire}</p>
+      <p>Emergency Numbers - Police: ${data.safety.emergencyNumbers.police}, Ambulance/Fire: ${data.safety.generalNumbers?.ambulanceFire ?? data.safety.emergencyNumbers.ambulanceFire}</p>
       <p>Travel Insurance: ${data.safety.travelInsurance}</p>
+
       <h3>Mini Plan</h3>
       <ol>
         ${data.mini.map(day => `<li>${day}</li>`).join("")}
       </ol>
     `;
-
     await sendEmail({
       to: email,
       subject: "Your Travel Plan Results",
