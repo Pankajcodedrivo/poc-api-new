@@ -1,46 +1,88 @@
-const OpenAI = require('openai');
+// generateTravelPlan.js
+const { getExchangeRates } = require("./utils/currencyExchange");
+const OpenAI = require("openai");
 
 const client = new OpenAI({ apiKey: process.env.OPENAI_API_KEY });
 
-const generateTravelPlan = async ({ destination, passport, start_date, end_date, budget }) => {
+async function generateTravelPlan({ destination, passport, start_date, end_date, budget }) {
   const start = new Date(start_date);
   const end = new Date(end_date);
   const tripLength = Math.ceil((end - start) / (1000 * 60 * 60 * 24));
 
-const systemPrompt = `
-You are a structured travel assistant.
-Given: Destination, Passport, Start Date, End Date, Budget.
+  // Get live exchange rates (no caching)
+  const exchangeRates = await getExchangeRates("USD");
 
-Output a JSON object ONLY with these fields:
+  const systemPrompt = `
+You are a structured travel assistant.
+Given: Destination, Passport, Start Date, End Date, Budget, and Exchange Rates.
+
+Return ONLY a JSON object matching:
 
 {
-  "visa": "HTML string with headings, paragraphs, links",
-  "budget": { "totalUSD": number, "perDayUSD": number, "perDayJPY": number, "breakdown": { "accommodation": number, "food": number, "transportation": number, "activities": number,"stay":number, } },
+  "visa": "HTML string with headings, paragraphs, and official links only",
+  "budget": {
+    "totalUSD": number,
+    "perDayUSD": number,
+    "perDayLocal": number,
+    "breakdown": { "accommodation": number, "food": number, "transportation": number, "activities": number, "stay": number }
+  },
   "local": { "apps": ["string"], "eSIM": ["string"] },
   "currency": { "localCurrency": "string", "exchangeTips": ["string"] },
   "safety": { "generalSafety": "string", "emergencyNumbers": { "police": number, "ambulanceFire": number }, "travelInsurance": "string" },
-  "mini": ["string"] // dynamic number of days based on trip length
+  "mini": ["string"]
 }
 
-- The "mini" array must match the number of trip days.
-- Do not include any extra text outside JSON.
+Rules:
+- "mini" array must match trip length.
+- For "visa", use official embassy links only.
+- For budget, convert USD → local currency using provided exchange rates.
+- "local.apps" and "local.eSIM" must be country-specific.
+- Output JSON only, no extra text.
 `;
 
   const userMessage = `
 Destination: ${destination}
 Passport: ${passport}
-Dates: ${start_date} to ${end_date} (Trip Length: ${tripLength} days)
+Dates: ${start_date} to ${end_date} (${tripLength} days)
 Budget: $${budget}
+Live Exchange Rates (USD base): ${JSON.stringify(exchangeRates)}
 `;
 
   const response = await client.chat.completions.create({
-      model: "gpt-4o-mini",
+    model: "gpt-4o-mini",
     messages: [
-      { role: 'system', content: systemPrompt },
-      { role: 'user', content: userMessage }
-    ]
+      { role: "system", content: systemPrompt },
+      { role: "user", content: userMessage }
+    ],
+    temperature: 0.7
   });
-   return JSON.parse(response.choices[0].message.content);
-};
+
+  const content = response.choices[0]?.message?.content;
+
+  try {
+    return JSON.parse(content);
+  } catch (err) {
+    console.error("❌ Failed to parse JSON:", err.message);
+    console.log("Raw output:", content);
+    throw new Error("Model did not return valid JSON.");
+  }
+}
 
 module.exports = { generateTravelPlan };
+
+// -------------------------
+// Example usage
+// -------------------------
+if (require.main === module) {
+  (async () => {
+    const plan = await generateTravelPlan({
+      destination: "Tokyo, Japan",
+      passport: "United States",
+      start_date: "2025-11-01",
+      end_date: "2025-11-10",
+      budget: 2500
+    });
+
+    console.log("\n🧳 Generated Travel Plan:\n", JSON.stringify(plan, null, 2));
+  })();
+}
