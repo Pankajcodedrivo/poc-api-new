@@ -22,6 +22,7 @@ Return ONLY a JSON object matching:
   "visa": "HTML string with headings, paragraphs, and official links only (use target='_blank' for all links)",
   "budget": {
     "totalUSD": number,
+    "totalLocal": number,
     "perDayUSD": number,
     "perDayLocal": number,
     "breakdown": {

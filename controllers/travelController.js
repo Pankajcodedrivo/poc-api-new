@@ -56,7 +56,7 @@ const sendTravelPlanEmail = async (req, res) => {
         <li>Stay: $${data.budget.breakdown.stayUSD} (~${data.budget.breakdown.stayLocal} ${data.currency.localCurrency})</li>
       </ul>
       <p>Total / Day: $${data.budget.perDayUSD} (~${data.budget.perDayLocal} ${data.currency.localCurrency})</p>
-      <p>Total Trip: $${data.budget.totalUSD}</p>
+      <p>Total Trip: $${data.budget.totalUSD} (~${data.budget.totalLocal} ${data.currency.localCurrency})</p>
 
       <h3>Local Tools & Connectivity</h3>
       <p>Apps: ${data.local.apps.join(", ")}</p>
