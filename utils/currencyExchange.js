@@ -1,7 +1,6 @@
 // utils/currencyExchange.js
 const fs = require("fs");
 const path = require("path");
-const fetch = require("node-fetch"); // CommonJS require
 
 const CACHE_FILE = path.resolve(__dirname, "../exchangeRates.json");
 const CACHE_DURATION_HOURS = 12;
