@@ -1,7 +1,7 @@
 // utils/currencyExchange.js
 const fs = require("fs");
 const path = require("path");
-const fetch = require("node-fetch");
+const fetch = require("node-fetch"); // CommonJS require
 
 const CACHE_FILE = path.resolve(__dirname, "../exchangeRates.json");
 const CACHE_DURATION_HOURS = 12;
@@ -35,12 +35,15 @@ async function getExchangeRates(base = "USD") {
   return data;
 }
 
+/**
+ * Fetch live exchange rates once a day (no caching)
+ */
 async function getExchangeRatesOnceADay(base = "USD") {
-  console.log("🔄 Fetching live exchange rates...");
+  console.log("🔄 Fetching live exchange rates once a day...");
   const res = await fetch(`https://open.er-api.com/v6/latest/${base}`);
   if (!res.ok) throw new Error(`Failed to fetch exchange rates (${res.status})`);
   const data = await res.json();
   return data.rates || {};
 }
 
-module.exports = { getExchangeRates,getExchangeRatesOnceADay };
+module.exports = { getExchangeRates, getExchangeRatesOnceADay };
