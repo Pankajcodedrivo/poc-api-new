@@ -9,9 +9,9 @@ async function generateTravelPlan({ destination, passport, start_date, end_date,
   const end = new Date(end_date);
   const tripLength = Math.ceil((end - start) / (1000 * 60 * 60 * 24));
 
-  // Get live exchange rates (no caching)
+  // Get live exchange rates (USD → others)
   const exchangeRates = await getExchangeRates("USD");
-
+  
   const systemPrompt = `
 You are a structured travel assistant.
 Given: Destination, Passport, Start Date, End Date, Budget, and Exchange Rates.
@@ -19,12 +19,23 @@ Given: Destination, Passport, Start Date, End Date, Budget, and Exchange Rates.
 Return ONLY a JSON object matching:
 
 {
-  "visa": "HTML string with headings, paragraphs, and official links only",
+  "visa": "HTML string with headings, paragraphs, and official links only (use target='_blank' for all links)",
   "budget": {
     "totalUSD": number,
     "perDayUSD": number,
     "perDayLocal": number,
-    "breakdown": { "accommodation": number, "food": number, "transportation": number, "activities": number, "stay": number }
+    "breakdown": {
+      "accommodationUSD": number,
+      "accommodationLocal": number,
+      "foodUSD": number,
+      "foodLocal": number,
+      "transportationUSD": number,
+      "transportationLocal": number,
+      "activitiesUSD": number,
+      "activitiesLocal": number,
+      "stayUSD": number,
+      "stayLocal": number
+    }
   },
   "local": { "apps": ["string"], "eSIM": ["string"] },
   "currency": { "localCurrency": "string", "exchangeTips": ["string"] },
@@ -34,8 +45,8 @@ Return ONLY a JSON object matching:
 
 Rules:
 - "mini" array must match trip length.
-- For "visa", use official embassy links only.
-- For budget, convert USD → local currency using provided exchange rates.
+- Convert all USD amounts → local currency using provided exchange rates.
+- For "visa", include official embassy links with target="_blank".
 - "local.apps" and "local.eSIM" must be country-specific.
 - Output JSON only, no extra text.
 `;
@@ -69,4 +80,3 @@ Live Exchange Rates (USD base): ${JSON.stringify(exchangeRates)}
 }
 
 module.exports = { generateTravelPlan };
-
