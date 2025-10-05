@@ -1,5 +1,5 @@
 // generateTravelPlan.js
-const { getExchangeRates } = require("./utils/currencyExchange");
+const { getExchangeRates } = require("../utils/currencyExchange");
 const OpenAI = require("openai");
 
 const client = new OpenAI({ apiKey: process.env.OPENAI_API_KEY });
@@ -70,19 +70,3 @@ Live Exchange Rates (USD base): ${JSON.stringify(exchangeRates)}
 
 module.exports = { generateTravelPlan };
 
-// -------------------------
-// Example usage
-// -------------------------
-if (require.main === module) {
-  (async () => {
-    const plan = await generateTravelPlan({
-      destination: "Tokyo, Japan",
-      passport: "United States",
-      start_date: "2025-11-01",
-      end_date: "2025-11-10",
-      budget: 2500
-    });
-
-    console.log("\n🧳 Generated Travel Plan:\n", JSON.stringify(plan, null, 2));
-  })();
-}

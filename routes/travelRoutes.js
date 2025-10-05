@@ -1,9 +1,11 @@
 const express = require('express');
-const { createTravelPlan } = require('../controllers/travelController');
-const { validateTravelInput } = require('../validators/travelValidator');
+const travelController = require('../controllers/travelController');
+const travelValidator = require('../validators/travelValidator');
 
 const router = express.Router();
 
-router.post('/', validateTravelInput, createTravelPlan);
+router.post('/', travelValidator.validateTravelInput, travelController.createTravelPlan);
+router.post('/feedback', travelValidator.validateFeedbackInput, travelController.sendFeedbackForm);
+router.post('/sendEmail',  travelController.sendTravelPlanEmail);
 
 module.exports = router;
