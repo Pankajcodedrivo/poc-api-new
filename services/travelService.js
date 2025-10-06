@@ -57,7 +57,12 @@ Rules:
 - For "visa", include both official visa application link and embassy info.
 - Output must be valid JSON only — no extra text.
 `;
-
+  const userMessage = `
+  Destination: ${destination}
+  Passport: ${passport}
+  Dates: ${start_date} to ${end_date} (${tripLength} days)
+  Budget: $${budget}
+  `;
 
   const response = await client.chat.completions.create({
     model: "gpt-4o-mini",
