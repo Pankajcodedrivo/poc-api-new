@@ -61,7 +61,7 @@ async function generateTravelPlan({ destination, passport, start_date, end_date,
   }
 
   Rules:
-  1. "visa" must include complete, valid HTML with headings, paragraphs, and **only official government/embassy links and eVisa application form apply links** (use target='_blank' for all links). **Do not include "www" in URLs unless the official site requires it. Do NOT invent URLs.**
+  1. "visa" must include complete, valid HTML with headings, paragraphs, and **only official government/embassy links and eVisa application links** (use target='_blank' for all links). **Do not include "www" in URLs unless the official site requires it. Do NOT invent URLs.**
   2. "local.apps" must include **at least 5–6 apps per category**, mixing local (country-specific) and global/universal apps.
   3. For the "currency" field:
      - Identify the local currency based on the destination (e.g., Canada → CAD, India → INR, Japan → JPY, UAE → AED, UK → GBP, Australia → AUD, etc.).
