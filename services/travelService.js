@@ -12,7 +12,6 @@ async function generateTravelPlan({ destination, passport, start_date, end_date,
 
   // Fetch live exchange rate JSON (your function must return full rates object)
   const exchangeRate = await getExchangeRates();
-  console.log(exchangeRate);
   // --- SYSTEM PROMPT ---
   const systemPrompt = `
   You are a structured travel assistant. 
@@ -63,9 +62,11 @@ async function generateTravelPlan({ destination, passport, start_date, end_date,
   1. "visa" must include complete, valid HTML with headings, paragraphs, and **only official government/embassy links and eVisa application links** (use target='_blank'). Do NOT invent URLs.
   2. "local.apps" must include **at least 5–6 apps per category**, mixing local (country-specific) and global/universal apps.
   3. For the "currency" field:
-     - Automatically determine the local currency based on the destination.
-     - Extract the exact exchange rate from the provided Exchange Rate JSON.
-     - Include exchange tips for travelers.
+    - Automatically determine the local currency based on the destination.
+   - Extract the exact exchange rate from the provided Exchange Rate JSON.
+   - Identify the correct local currency based on the destination country.
+    - Parse the provided Exchange Rate JSON to find the exact numeric rate for that currency.
+    - Use that rate to express values and include exchange tips.
   4. "mini" array must match the **trip length** with day-by-day details.
   5. All amounts are in **USD**.
   6. Output must be **valid JSON only**, with HTML properly escaped inside strings.
