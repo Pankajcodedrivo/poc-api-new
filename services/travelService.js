@@ -44,19 +44,14 @@ Return ONLY a JSON object matching:
 }
 
 Rules:
+- "visa" must include complete, valid HTML with headings, paragraphs, and **only official government/embassy links** (use target='_blank'). Do NOT invent URLs.
+- "local.apps" must include **at least 5–6 apps per category**, mixing local (country-specific) and universal/global apps.
+- "currency.exchangeRate" is a placeholder; fetch live rates via API if needed.
 - "mini" array must match trip length.
-- All amounts are in USD only.
-- "local.apps" must include **both local (country-specific)** and **universal (global)** apps in each category:
-  - transportation: local ride-sharing or public transport apps (e.g., Grab, Bolt, Joyride) + universal (e.g., Uber)
-  - lodging: local accommodation apps (e.g., Agoda) + universal (e.g., Airbnb, Booking.com)
-  - communication: local messaging or SIM apps (e.g., LINE, WeChat) + universal (e.g., WhatsApp, Google Translate)
-  - budgetTravel: local sharing or backpacking communities + universal (e.g., Couchsurfing, BlaBlaCar)
-  - navigation: local transit or map tools + universal (e.g., Google Maps, Citymapper)
-  - utilities: local financial or weather apps + universal (e.g., XE Currency, AccuWeather)
-- "eSIM" should include top eSIM providers available in the destination country.
-- For "visa", include both official visa application link and embassy info.
-- Output must be valid JSON only — no extra text.
+- All amounts are in USD.
+- Output must be valid JSON only, with HTML properly escaped inside strings.
 `;
+
   const userMessage = `
   Destination: ${destination}
   Passport: ${passport}
