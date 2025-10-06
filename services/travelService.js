@@ -44,10 +44,10 @@ Return ONLY a JSON object matching:
 }
 
 Rules:
-- "visa" must include complete, valid HTML with headings, paragraphs, and **only official government/embassy links/evisa apply link** (use target='_blank'). Do NOT invent URLs.
+- "visa" must include complete, valid HTML with headings, paragraphs, and **only official government + embassy links + evisa apply link** (use target='_blank'). Do NOT invent URLs.
 - "local.apps" must include **at least 5–6 apps per category**, mixing local (country-specific) and universal/global apps.
-- "currency.exchangeRate" is a placeholder; fetch live rates via API if needed.
-- "mini" array must match trip length.
+- Include the local currency and live exchange rate as provided.
+- "mini" array must match trip length with details.
 - All amounts are in USD.
 - Output must be valid JSON only, with HTML properly escaped inside strings.
 `;
