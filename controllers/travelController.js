@@ -39,38 +39,64 @@ const sendTravelPlanEmail = async (req, res) => {
       return res.status(400).json({ success: false, message: "Email and data are required" });
     }
 
+    // Generate local apps section dynamically
+    const appSections = Object.entries(data.local.apps)
+      .map(
+        ([category, apps]) =>
+          `<li><strong>${category.charAt(0).toUpperCase() + category.slice(1)}:</strong> ${apps.join(", ")}</li>`
+      )
+      .join("");
+
+    // Build HTML email body
     const htmlContent = `
       <h2>Travel Planner Results</h2>
 
       <h3>Visa & Entry</h3>
-      <p>${data.visa}</p>
+      ${data.visa}
 
       <h3>Budget</h3>
       <ul>
-        <li>Accommodation: $${data.budget.breakdown.accommodation} (~${(data.budget.breakdown.accommodation * data.currency.exchangeRate).toFixed(2)} ${data.currency.localCurrency})</li>
-        <li>Food: $${data.budget.breakdown.food} (~${(data.budget.breakdown.food * data.currency.exchangeRate).toFixed(2)} ${data.currency.localCurrency})</li>
-        <li>Transportation: $${data.budget.breakdown.transportation} (~${(data.budget.breakdown.transportation * data.currency.exchangeRate).toFixed(2)} ${data.currency.localCurrency})</li>
-        <li>Activities: $${data.budget.breakdown.activities} (~${(data.budget.breakdown.activities * data.currency.exchangeRate).toFixed(2)} ${data.currency.localCurrency})</li>
-        <li>Stay: $${data.budget.breakdown.stay} (~${(data.budget.breakdown.stay * data.currency.exchangeRate).toFixed(2)} ${data.currency.localCurrency})</li>
+        <li>Accommodation: $${data.budget.breakdown.accommodation} (~${(
+      data.budget.breakdown.accommodation * data.currency.exchangeRate
+    ).toFixed(2)} ${data.currency.localCurrency})</li>
+        <li>Food: $${data.budget.breakdown.food} (~${(
+      data.budget.breakdown.food * data.currency.exchangeRate
+    ).toFixed(2)} ${data.currency.localCurrency})</li>
+        <li>Transportation: $${data.budget.breakdown.transportation} (~${(
+      data.budget.breakdown.transportation * data.currency.exchangeRate
+    ).toFixed(2)} ${data.currency.localCurrency})</li>
+        <li>Activities: $${data.budget.breakdown.activities} (~${(
+      data.budget.breakdown.activities * data.currency.exchangeRate
+    ).toFixed(2)} ${data.currency.localCurrency})</li>
+        <li>Stay: $${data.budget.breakdown.stay} (~${(
+      data.budget.breakdown.stay * data.currency.exchangeRate
+    ).toFixed(2)} ${data.currency.localCurrency})</li>
       </ul>
-      <p>Total / Day: $${data.budget.perDayUSD} (~${(data.budget.perDayUSD * data.currency.exchangeRate).toFixed(2)} ${data.currency.localCurrency})</p>
-      <p>Total Trip: $${data.budget.totalUSD} (~${(data.budget.totalUSD * data.currency.exchangeRate).toFixed(2)} ${data.currency.localCurrency})</p>
+      <p><strong>Total / Day:</strong> $${data.budget.perDayUSD} (~${(
+      data.budget.perDayUSD * data.currency.exchangeRate
+    ).toFixed(2)} ${data.currency.localCurrency})</p>
+      <p><strong>Total Trip:</strong> $${data.budget.totalUSD} (~${(
+      data.budget.totalUSD * data.currency.exchangeRate
+    ).toFixed(2)} ${data.currency.localCurrency})</p>
 
       <h3>Local Tools & Connectivity</h3>
-      <p>Apps: ${data.local.apps.join(", ")}</p>
-      <p>eSIMs: ${data.local.eSIM.join(", ")}</p>
+      <ul>
+        ${appSections}
+      </ul>
+      <p><strong>eSIMs:</strong> ${data.local.eSIM.join(", ")}</p>
 
       <h3>Currency & Exchange Tips</h3>
-      <p>Local Currency: ${data.currency.localCurrency}</p>
-      <p>Exchange Rate (USD → ${data.currency.localCurrency}): ${data.currency.exchangeRate}</p>
+      <p><strong>Local Currency:</strong> ${data.currency.localCurrency}</p>
+      <p><strong>Exchange Rate (USD → ${data.currency.localCurrency}):</strong> ${data.currency.exchangeRate}</p>
       <ul>
         ${data.currency.exchangeTips.map(tip => `<li>${tip}</li>`).join("")}
       </ul>
 
       <h3>Safety & Emergency</h3>
       <p>${data.safety.generalSafety}</p>
-      <p>Emergency Numbers - Police: ${data.safety.emergencyNumbers.police}, Ambulance/Fire: ${data.safety.emergencyNumbers.ambulanceFire}</p>
-      <p>Travel Insurance: ${data.safety.travelInsurance}</p>
+      <p><strong>Emergency Numbers:</strong> Police - ${data.safety.emergencyNumbers.police}, 
+      Ambulance/Fire - ${data.safety.emergencyNumbers.ambulanceFire}</p>
+      <p><strong>Travel Insurance:</strong> ${data.safety.travelInsurance}</p>
 
       <h3>Mini Plan</h3>
       <ol>
@@ -91,5 +117,6 @@ const sendTravelPlanEmail = async (req, res) => {
     res.status(500).json({ success: false, message: "Server error" });
   }
 };
+
 
 module.exports = { createTravelPlan, sendFeedbackForm,sendTravelPlanEmail };
