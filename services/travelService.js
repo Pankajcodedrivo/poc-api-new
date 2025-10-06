@@ -61,8 +61,12 @@ async function generateTravelPlan({ destination, passport, start_date, end_date,
   }
 
   Rules:
-  1. "visa" must include complete, valid HTML with headings, paragraphs, and **only official government/embassy links and eVisa application links** (use target='_blank' for all links). **Do not include "www" in URLs unless the official site requires it. Do NOT invent URLs.**
-  2. "local.apps" must include **at least 5–6 apps per category**, mixing local (country-specific) and global/universal apps.
+  1. "visa" must include complete, valid HTML with headings, paragraphs, and **only official government/embassy links and eVisa application links** (use target='_blank' for all links).  
+   - Always include a **"Visa Application Online Form"** section with the official eVisa or embassy form link of the destination country.  
+   - Example format: <a href='https://official-evisa-link.com' target='_blank'>Destination eVisa Application Form</a>.  
+   - If the passport allows visa-free travel, include an official link confirming visa-free status.  
+   - Do NOT include "www" unless required by the official site.  
+   - Do NOT invent or guess URLs.
   3. For the "currency" field:
      - Identify the local currency based on the destination (e.g., Canada → CAD, India → INR, Japan → JPY, UAE → AED, UK → GBP, Australia → AUD, etc.).
      - Parse the provided Exchange Rate JSON (under 'rates') and extract the correct numeric rate for that currency code.
