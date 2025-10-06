@@ -10,8 +10,10 @@ async function generateTravelPlan({ destination, passport, start_date, end_date,
   const end = new Date(end_date);
   const tripLength = Math.ceil((end - start) / (1000 * 60 * 60 * 24));
 
-  // Fetch live exchange rate JSON (your function must return full rates object)
-  const exchangeRate = await getExchangeRates();
+  // Fetch exchange rate JSON from your API
+  const exchangeData = await getExchangeRates(); // Must return the same JSON you posted
+  const rates = exchangeData.rates;
+
   // --- SYSTEM PROMPT ---
   const systemPrompt = `
   You are a structured travel assistant. 
@@ -62,14 +64,14 @@ async function generateTravelPlan({ destination, passport, start_date, end_date,
   1. "visa" must include complete, valid HTML with headings, paragraphs, and **only official government/embassy links and eVisa application links** (use target='_blank'). Do NOT invent URLs.
   2. "local.apps" must include **at least 5–6 apps per category**, mixing local (country-specific) and global/universal apps.
   3. For the "currency" field:
-   - Identify the correct local currency for the given destination using standard country-to-currency mappings 
-     (for example: Canada → CAD, United Kingdom → GBP, Japan → JPY, Australia → AUD, India → INR, United Arab Emirates → AED, etc.).
-   - Once the local currency is identified, look up the exact numeric value for that currency code in the provided Exchange Rate JSON.
-   - Use that numeric value as the "exchangeRate" (1 USD = X local currency).
-   - Include at least 3 exchange tips for travelers about currency usage, ATMs, cards, and cash handling in the destination.
+     - Identify the local currency based on the destination (e.g., Canada → CAD, India → INR, Japan → JPY, UAE → AED, UK → GBP, Australia → AUD, etc.).
+     - Parse the provided Exchange Rate JSON (under 'rates') and extract the correct numeric rate for that currency code.
+     - The value corresponds to "1 USD = X local currency".
+     - Include at least 3 exchange tips for travelers (ATM, cards, mobile payments, and cash).
+     - Always include this field even if the currency rate is 1.
   4. "mini" array must match the **trip length** with day-by-day details.
-  5. All amounts are in **USD**.
-  6. Output must be **valid JSON only**, with HTML properly escaped inside strings.
+  5. All amounts are in USD.
+  6. Output must be valid JSON only, with HTML properly escaped inside strings.
   `;
 
   // --- USER MESSAGE ---
@@ -80,7 +82,8 @@ async function generateTravelPlan({ destination, passport, start_date, end_date,
   End Date: ${end_date}
   Trip Length: ${tripLength} days
   Budget: $${budget}
-  Exchange Rates JSON: ${JSON.stringify(exchangeRate.rate, null, 2)}
+  Exchange Rate Data (for all currencies):
+  ${JSON.stringify(rates, null, 2)}
   `;
 
   // --- CALL OPENAI ---
@@ -104,5 +107,6 @@ async function generateTravelPlan({ destination, passport, start_date, end_date,
     throw new Error("Model did not return valid JSON.");
   }
 }
+
 
 module.exports = { generateTravelPlan };
