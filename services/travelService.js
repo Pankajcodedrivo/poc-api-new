@@ -71,7 +71,8 @@ async function generateTravelPlan({ destination, passport, start_date, end_date,
      - Always include this field even if the currency rate is 1.
   4. "mini" array must match the **trip length** with day-by-day details.
   5. All amounts are in USD.
-  6. Output must be **valid JSON only**, with HTML properly escaped inside strings.
+  6. Output must be **valid JSON only**, with HTML properly escaped inside strings (no triple backticks).
+  7. Do NOT wrap your answer in markdown or backticks. Return pure JSON.
   `;
 
   // --- USER MESSAGE ---
