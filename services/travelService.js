@@ -15,10 +15,10 @@ async function generateTravelPlan({ destination, passport, start_date, end_date,
   const rates = exchangeData.rates;
 
   // --- SYSTEM PROMPT ---
-  const systemPrompt = `
+ const systemPrompt = `
   You are a structured travel assistant. 
 
-  Given: Destination, Passport, Start Date, End Date, Budget, and Exchange Rate JSON (all currencies), return ONLY a JSON object matching:
+  Given: Destination(s), Passport, Start Date, End Date, Budget, and Exchange Rate JSON (all currencies), return ONLY a JSON object matching:
 
   {
     "visa": "HTML string with headings, paragraphs, and official links only (use target='_blank' for all links)",
@@ -33,17 +33,20 @@ async function generateTravelPlan({ destination, passport, start_date, end_date,
         "stay": number
       }
     },
-    "local": {
-      "apps": {
-        "transportation": ["string"],
-        "lodging": ["string"],
-        "communication": ["string"],
-        "budgetTravel": ["string"],
-        "navigation": ["string"],
-        "utilities": ["string"]
-      },
-      "eSIM": ["string"]
-    },
+    "local": [
+      {
+        "destination": "string",
+        "apps": {
+          "transportation": ["string"],
+          "lodging": ["string"],
+          "communication": ["string"],
+          "budgetTravel": ["string"],
+          "navigation": ["string"],
+          "utilities": ["string"]
+        },
+        "eSIM": ["string"]
+      }
+    ],
     "currencies": [
       {
         "destination": "string",
@@ -52,31 +55,35 @@ async function generateTravelPlan({ destination, passport, start_date, end_date,
         "exchangeTips": ["string"]
       }
     ],
-    "safety": {
-      "generalSafety": "string",
-      "emergencyNumbers": {
-        "police": number,
-        "ambulanceFire": number
-      },
-      "travelInsurance": "string"
-    },
+    "safety": [
+      {
+        "destination": "string",
+        "generalSafety": "string",
+        "emergencyNumbers": {
+          "police": number,
+          "ambulanceFire": number
+        },
+        "travelInsurance": "string"
+      }
+    ],
     "mini": ["string"]
   }
 
   Rules:
   1. "visa" must include complete, valid HTML with headings, paragraphs, and **only official government/embassy links and eVisa application links** (use target='_blank' for all links). **Do not include "www" in URLs unless the official site requires it. Do NOT invent URLs.**
-  2. "local.apps" must include **at least 5–6 apps per category**, mixing local (country-specific) and global/universal apps.
-  3. For the "currency" field:
-     - Identify the local currency based on the destination (e.g., Canada → CAD, India → INR, Japan → JPY, UAE → AED, UK → GBP, Australia → AUD, etc.).
-     - Parse the provided Exchange Rate JSON (under 'rates') and extract the correct numeric rate for that currency code.
+  2. "local" must be an array where each object corresponds to a destination. Each "apps" category must include **at least 5–6 apps**, mixing local (country-specific) and global/universal apps.
+  3. "currencies" must be an array where each object corresponds to a destination:
+     - Identify the correct local currency (e.g., Canada → CAD, India → INR, Japan → JPY, UAE → AED, UK → GBP, Australia → AUD, etc.).
+     - Parse the provided Exchange Rate JSON (under 'rates') and extract the numeric rate for that currency code.
      - The value corresponds to "1 USD = X local currency".
-     - Include at least 3 exchange tips for travelers (ATM, cards, mobile payments, and cash).
+     - Include at least 3 exchange tips (ATM, cards, mobile payments, and cash).
      - Always include this field even if the currency rate is 1.
-  4. "mini" array must match the **trip length** with day-by-day details.
-  5. All amounts are in USD.
-  6. Output must be **valid JSON only**, with HTML properly escaped inside strings (no triple backticks).
-  7. Do NOT wrap your answer in markdown or backticks. Return pure JSON.
-  `;
+  4. "safety" must be an array where each object corresponds to a destination, with accurate "generalSafety" details and correct local emergency numbers.
+  5. "mini" array must match the **trip length** with day-by-day details.
+  6. All amounts are in USD.
+  7. Output must be **valid JSON only**, with HTML properly escaped inside strings (no triple backticks).
+  8. Do NOT wrap your answer in markdown or backticks. Return pure JSON.
+`;
 
   // --- USER MESSAGE ---
   const userMessage = `
