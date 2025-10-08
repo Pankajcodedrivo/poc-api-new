@@ -44,11 +44,14 @@ async function generateTravelPlan({ destination, passport, start_date, end_date,
       },
       "eSIM": ["string"]
     },
-    "currency": {
-      "localCurrency": "string",
-      "exchangeRate": number,
-      "exchangeTips": ["string"]
-    },
+    "currencies": [
+      {
+        "destination": "string",
+        "localCurrency": "string",
+        "exchangeRate": number,
+        "exchangeTips": ["string"]
+      }
+    ],
     "safety": {
       "generalSafety": "string",
       "emergencyNumbers": {
