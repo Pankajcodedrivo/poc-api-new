@@ -11,11 +11,11 @@ async function generateTravelPlan({ destination, passport, start_date, end_date,
   const tripLength = Math.ceil((end - start) / (1000 * 60 * 60 * 24));
 
   // Fetch exchange rate JSON from your API
-  const exchangeData = await getExchangeRates(); // Must return the same JSON you posted
+  const exchangeData = await getExchangeRates();
   const rates = exchangeData.rates;
 
   // --- SYSTEM PROMPT ---
- const systemPrompt = `
+  const systemPrompt = `
   You are a structured travel assistant. 
 
   Given: Destination(s), Passport, Start Date, End Date, Budget, and Exchange Rate JSON (all currencies), return ONLY a JSON object matching:
@@ -30,7 +30,7 @@ async function generateTravelPlan({ destination, passport, start_date, end_date,
         "food": number,
         "transportation": number,
         "activities": number,
-        "stay": number
+        "miscellaneous": number
       }
     },
     "local": [
@@ -63,27 +63,29 @@ async function generateTravelPlan({ destination, passport, start_date, end_date,
           "police": number,
           "ambulanceFire": number
         },
-        "travelInsurance": "string"
+        "travelInsurance": "HTML string that includes a short paragraph and at least one global travel insurance link (<a href='...' target='_blank'>...) such as Allianz, AXA, SafetyWing, or World Nomads"
       }
     ],
     "mini": ["string"]
   }
 
   Rules:
-  1. "visa" must include complete, valid HTML with headings, paragraphs, and **only official government/embassy links and eVisa application links** (use target='_blank' for all links). **Do not include "www" in URLs unless the official site requires it. Do NOT invent URLs.**
+  1. "visa" must include complete, valid HTML with headings, paragraphs, and **only official government/embassy links and eVisa application links** (use target='_blank' for all links). **Do not include "www" in URLs unless required. Do NOT invent URLs.**
   2. "local" must be an array where each object corresponds to a destination. Each "apps" category must include **at least 5–6 apps**, mixing local (country-specific) and global/universal apps.
   3. "currencies" must be an array where each object corresponds to a destination:
-     - Identify the correct local currency (e.g., Canada → CAD, India → INR, Japan → JPY, UAE → AED, UK → GBP, Australia → AUD, etc.).
-     - Parse the provided Exchange Rate JSON (under 'rates') and extract the numeric rate for that currency code.
+     - Identify the correct local currency.
+     - Extract the numeric rate for that currency code from the provided exchange rate JSON.
      - The value corresponds to "1 USD = X local currency".
      - Include at least 3 exchange tips (ATM, cards, mobile payments, and cash).
-     - Always include this field even if the currency rate is 1.
-  4. "safety" must be an array where each object corresponds to a destination, with accurate "generalSafety" details and correct local emergency numbers.
-  5. "mini" array must match the **trip length** with day-by-day details.
+  4. "safety" must include:
+     - A realistic general safety summary for the destination.
+     - Accurate emergency numbers.
+     - "travelInsurance" must contain **an HTML paragraph** recommending global providers (like Allianz, AXA, SafetyWing, World Nomads) with working links using target='_blank'.
+  5. "mini" array must include a day-by-day summary equal to the trip length.
   6. All amounts are in USD.
-  7. Output must be **valid JSON only**, with HTML properly escaped inside strings (no triple backticks).
-  8. Do NOT wrap your answer in markdown or backticks. Return pure JSON.
-`;
+  7. Output must be **valid JSON only**, with HTML properly escaped inside strings (no backticks, no markdown).
+  8. Return pure JSON only, no commentary.
+  `;
 
   // --- USER MESSAGE ---
   const userMessage = `
@@ -118,6 +120,5 @@ async function generateTravelPlan({ destination, passport, start_date, end_date,
     throw new Error("Model did not return valid JSON.");
   }
 }
-
 
 module.exports = { generateTravelPlan };

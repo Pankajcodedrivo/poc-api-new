@@ -72,7 +72,7 @@ const sendTravelPlanEmail = async (req, res) => {
         <li>Food: $${data.budget.breakdown.food}</li>
         <li>Transportation: $${data.budget.breakdown.transportation}</li>
         <li>Activities: $${data.budget.breakdown.activities}</li>
-        <li>Stay: $${data.budget.breakdown.stay}</li>
+        <li>Miscellaneous: $${data.budget.breakdown.miscellaneous}</li>
       </ul>
       <p><strong>Total / Day:</strong> $${data.budget.perDayUSD}</p>
       <p><strong>Total Trip:</strong> $${data.budget.totalUSD}</p>
