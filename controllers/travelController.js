@@ -104,7 +104,7 @@ const sendTravelPlanEmail = async (req, res) => {
         <div style="margin-bottom:10px;">
           <p><strong>${s.destination}:</strong> ${s.generalSafety}</p>
           <p>Emergency — Police: ${s.emergencyNumbers.police}, Ambulance/Fire: ${s.emergencyNumbers.ambulanceFire}</p>
-          <p>Travel Insurance: ${s.travelInsurance}</p>
+          <div><strong>Travel Insurance</strong>: ${s.travelInsurance}</div>
         </div>
       `
         )
