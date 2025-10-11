@@ -59,7 +59,7 @@ Given: Destination(s), Passport, Start Date, End Date, Budget, and Exchange Rate
     {
       "destination": "string",
       "generalSafety": "string",
-      "scamsAndReviews": "HTML string that includes at least one valid link to a country-specific scams/advisory page (government or consumer protection where available) and at least one traveler-review/forum link (e.g., reddit or TripAdvisor threads) so travelers can read others' experiences; all links must use target='_blank'",
+      "scamsAndReviews": "HTML string that includes at least one valid link to a country-specific scams/advisory page (government or consumer protection where available) and at least one traveler-review/forum link (e.g., reddit and TripAdvisor threads) so travelers can read others' experiences; all links must use target='_blank'",
       "emergencyNumbers": {
         "police": number,
         "ambulanceFire": number
