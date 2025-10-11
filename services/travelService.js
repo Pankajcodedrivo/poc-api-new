@@ -59,6 +59,7 @@ async function generateTravelPlan({ destination, passport, start_date, end_date,
       {
         "destination": "string",
         "generalSafety": "string",
+        "scamsAndReviews": "HTML string that includes at least one link to a country-specific scams/advisory page (government or consumer protection where available) and at least one traveler-review/forum link (e.g., reddit or TripAdvisor threads) so travelers can read others' experiences; all links must use target='_blank'",
         "emergencyNumbers": {
           "police": number,
           "ambulanceFire": number
@@ -73,14 +74,15 @@ async function generateTravelPlan({ destination, passport, start_date, end_date,
   1. "visa" must include complete, valid HTML with headings, paragraphs, and **only official government/embassy links and eVisa application links** (use target='_blank' for all links). **Do not include "www" in URLs unless required. Do NOT invent URLs.**
   2. "local" must be an array where each object corresponds to a destination. Each "apps" category must include **at least 5–6 apps**, mixing local (country-specific) and global/universal apps.
   3. "currencies" must be an array where each object corresponds to a destination:
-     - Identify the correct local currency.
-     - Extract the numeric rate for that currency code from the provided exchange rate JSON.
-     - The value corresponds to "1 USD = X local currency".
-     - Include at least 3 exchange tips (ATM, cards, mobile payments, and cash).
+    - Identify the correct local currency.
+    - Extract the numeric rate for that currency code from the provided exchange rate JSON.
+    - The value corresponds to "1 USD = X local currency".
+    - Include at least 4 exchange tips (ATM, cards, mobile payments, cash) and **explicitly include a tip recommending avoiding airport exchange booths and instead using local banks or reputable exchange services for better rates**.
   4. "safety" must include:
-     - A realistic general safety summary for the destination.
-     - Accurate emergency numbers.
-     - "travelInsurance" must contain **an HTML paragraph** recommending global providers (like Allianz, AXA, SafetyWing, World Nomads) with working links using target='_blank'.
+    - A realistic general safety summary for the destination.
+    - "scamsAndReviews" must be an HTML string with at least one link to up-to-date common scams/advisory information (prefer government or consumer protection pages when available) and at least one traveler-review/forum link (for example reddit, TripAdvisor or other travel communities) so users can read other people's experiences; use target='_blank' for all links.
+    - Accurate emergency numbers.
+    - "travelInsurance" must contain **an HTML paragraph** recommending global providers (like Allianz, AXA, SafetyWing, World Nomads) with working links using target='_blank'.
   5. "mini" array must include a day-by-day summary equal to the trip length.
   6. All amounts are in USD.
   7. Output must be **valid JSON only**, with HTML properly escaped inside strings (no backticks, no markdown).
