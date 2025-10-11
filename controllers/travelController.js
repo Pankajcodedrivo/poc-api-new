@@ -27,7 +27,7 @@ const sendFeedbackForm = async (req, res) => {
       .join('');
 
     await sendEmail({
-      to: process.env.SENDGRID_FROM_EMAIL, // your receiving email
+      to: `${process.env.SENDGRID_FROM_EMAIL},bittus@scaleupsoftware.io`, // your receiving email
       subject: "New Feedback Received",
       html: `<h2>New Feedback Submission</h2>${emailContent}`
     });
