@@ -15,13 +15,21 @@ const createTravelPlan = async (req, res) => {
 // Controller to handle feedback form submission
 const sendFeedbackForm = async (req, res) => {
   try {
-    const { message } = req.body
+    const form = req.body;
 
-    // Optional: send feedback email
+    if (!form || Object.keys(form).length === 0) {
+      return res.status(400).json({ success: false, message: "Feedback form is empty" });
+    }
+
+    // Construct email content
+    const emailContent = Object.entries(form)
+      .map(([key, value]) => `<p><strong>${key}:</strong> ${value}</p>`)
+      .join('');
+
     await sendEmail({
-      to: process.env.SENDGRID_FROM_EMAIL,
+      to: process.env.SENDGRID_FROM_EMAIL, // your receiving email
       subject: "New Feedback Received",
-      text: message
+      html: `<h2>New Feedback Submission</h2>${emailContent}`
     });
 
     res.json({ success: true, message: "Feedback received successfully" });
@@ -30,6 +38,7 @@ const sendFeedbackForm = async (req, res) => {
     res.status(500).json({ success: false, message: "Server error" });
   }
 };
+
 
 const sendTravelPlanEmail = async (req, res) => {
   try {
