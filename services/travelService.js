@@ -14,7 +14,7 @@ async function generateTravelPlan({ destination, passport, start_date, end_date,
   const exchangeData = await getExchangeRates();
   const rates = exchangeData.rates;
 
-  // --- SYSTEM PROMPT ---
+// --- SYSTEM PROMPT ---
 const systemPrompt = `
 You are a structured travel assistant. 
 
@@ -59,7 +59,7 @@ Given: Destination(s), Passport, Start Date, End Date, Budget, and Exchange Rate
     {
       "destination": "string",
       "generalSafety": "string",
-      "scamsAndReviews": "HTML string that includes at least one link to an official scams/advisory page (e.g., https://travel.state.gov/en/international-travel/travel-advisories/scams.html) and at least one traveler-review/forum link (e.g., https://www.reddit.com/r/travel/comments/1clcqna/whats_the_worst_scam_youve_fallen_for_while/) using target='_blank' so travelers can read others' experiences",
+      "scamsAndReviews": "HTML string that includes at least one valid, working link to a country-specific official scams/advisory page (government or consumer protection where available; e.g., Travel.State.gov travel scams) and at least one traveler-review/forum link (e.g., reddit, TripAdvisor) using target='_blank' so travelers can read others' experiences",
       "emergencyNumbers": {
         "police": number,
         "ambulanceFire": number
@@ -80,7 +80,7 @@ Rules:
    - Include at least 4 exchange tips (ATM, cards, mobile payments, cash) and **explicitly include a tip recommending avoiding airport exchange booths and instead using local banks or reputable exchange services for better rates**.
 4. "safety" must include:
    - A realistic general safety summary for the destination.
-   - "scamsAndReviews" must use a valid, working official scams/advisory link (e.g., https://travel.state.gov/en/international-travel/travel-advisories/scams.html) and a real traveler-review/forum link (e.g., https://www.reddit.com/r/travel/comments/1clcqna/whats_the_worst_scam_youve_fallen_for_while/) with target='_blank'.
+   - "scamsAndReviews" must include **a valid official government/consumer protection advisory link for that country** (if unavailable, use a global advisory page like https://travel.state.gov/en/international-travel/travel-advisories/scams.html) and **at least one traveler forum/review link** (e.g., reddit or TripAdvisor) using target='_blank'.
    - Accurate emergency numbers.
    - "travelInsurance" must contain **an HTML paragraph** recommending global providers (like Allianz, AXA, SafetyWing, World Nomads) with working links using target='_blank'.
 5. "mini" array must include a day-by-day summary equal to the trip length.
@@ -88,6 +88,7 @@ Rules:
 7. Output must be **valid JSON only**, with HTML properly escaped inside strings (no backticks, no markdown).
 8. Return pure JSON only, no commentary.
 `;
+
 
 
   // --- USER MESSAGE ---
