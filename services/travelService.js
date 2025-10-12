@@ -14,7 +14,7 @@ async function generateTravelPlan({ destination, passport, start_date, end_date,
   const exchangeData = await getExchangeRates();
   const rates = exchangeData.rates;
 
-  // --- SYSTEM PROMPT ---
+// --- SYSTEM PROMPT ---
 const systemPrompt = `
 You are a structured travel assistant. 
 
@@ -59,7 +59,7 @@ Given: Destination(s), Passport, Start Date, End Date, Budget, and Exchange Rate
     {
       "destination": "string",
       "generalSafety": "string",
-      "scamsAndReviews": "HTML string that includes at least one valid link to a country-specific scams/advisory page (government or consumer protection where available) and at least one traveler-review/forum link (e.g., reddit and TripAdvisor threads) so travelers can read others' experiences; all links must use target='_blank'",
+      "scamsAndReviews": "HTML string that includes at least one valid link to a country-specific scams/advisory page (government or consumer protection where available) and at least one traveler-review/forum link (e.g., reddit and TripAdvisor threads) so travelers can read others' experiences; all links must use target='_blank' and must be valid/accessible",
       "emergencyNumbers": {
         "police": number,
         "ambulanceFire": number
@@ -71,7 +71,7 @@ Given: Destination(s), Passport, Start Date, End Date, Budget, and Exchange Rate
 }
 
 Rules:
-1. "visa" must include complete, valid HTML with headings, paragraphs, and **only official government/embassy links and eVisa application links** (use target='_blank' for all links). **Do not include "www" in URLs unless required. Do NOT invent URLs.**
+1. "visa" must include complete, valid HTML with headings, paragraphs, and **only official government/embassy links and eVisa application links** (use target='_blank' for all links). **Do not include 'www' in URLs unless required. Do NOT invent URLs.**
 2. "local" must be an array where each object corresponds to a destination. Each "apps" category must include **at least 5–6 apps**, mixing local (country-specific) and global/universal apps.
 3. "currencies" must be an array where each object corresponds to a destination:
    - Identify the correct local currency.
@@ -79,15 +79,19 @@ Rules:
    - The value corresponds to "1 USD = X local currency".
    - Include at least 4 exchange tips (ATM, cards, mobile payments, cash) and **explicitly include a tip recommending avoiding airport exchange booths and instead using local banks or reputable exchange services for better rates**.
 4. "safety" must include:
-   - A realistic general safety summary for the destination.
-   - "scamsAndReviews" must be an HTML string with at least one link to up-to-date common scams/advisory information (prefer government or consumer protection pages when available) and at least one traveler-review/forum valid link (for example reddit, TripAdvisor or other travel communities) so users can read other people's experiences; use target='_blank' for all links.
-   - Accurate emergency numbers.
+   - A **realistic and accurate general safety summary** that matches the tone and level of the **official government advisories linked below**. Do not describe a country as "generally safe" if its advisory indicates a high-risk (e.g., Level 3 or 4). Always align your safety summary with the linked advisory.
+   - "scamsAndReviews" must be an **HTML string** with:
+     - At least one **valid** link to up-to-date official scams/advisory information (prefer government or consumer protection sites).
+     - At least one **traveler-review/forum** link (e.g., Reddit travel discussions, TripAdvisor threads, or similar forums) so users can read other travelers’ real experiences.
+     - All links must open in a new tab using target='_blank' and must not be broken or placeholder links.
+   - "emergencyNumbers" must include accurate police and ambulance/fire contact numbers.
    - "travelInsurance" must contain **an HTML paragraph** recommending global providers (like Allianz, AXA, SafetyWing, World Nomads) with working links using target='_blank'.
 5. "mini" array must include a day-by-day summary equal to the trip length.
 6. All amounts are in USD.
 7. Output must be **valid JSON only**, with HTML properly escaped inside strings (no backticks, no markdown).
-8. Return pure JSON only, no commentary.
+8. Return pure JSON only — no explanations, commentary, or additional text outside the JSON.
 `;
+
 
   // --- USER MESSAGE ---
   const userMessage = `
