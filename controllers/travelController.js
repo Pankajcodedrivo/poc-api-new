@@ -21,13 +21,33 @@ const sendFeedbackForm = async (req, res) => {
       return res.status(400).json({ success: false, message: "Feedback form is empty" });
     }
 
-    // Construct email content
+       // 🧭 Map question keys to readable labels
+    const questionLabels = {
+      q1: "1. How often do you travel?",
+      q2: "2. What type of traveler best describes you?",
+      q3: "3. How easy was it to understand what the app does?",
+      q4: "4. How smooth was your experience using the app?",
+      q5: "5. What was your first impression after using it?",
+      q6: "6. Did the app give you information you’d actually use?",
+      q7: "7. Which features did you find most helpful?",
+      q8: "8. Which features were least helpful or confusing?",
+      q9: "9. On a scale of 1–10, how likely are you to use this app again?",
+      q10: "10. What’s one thing you would improve or add?",
+      q11: "11. If you could describe your experience in one word, what would it be?",
+      q12: "12. Would you like to be part of early access for the MVP next year?",
+      q13: "13. Would you be okay if we quoted your feedback (first name only)?",
+    };
+
+    // 🧩 Build readable HTML email
     const emailContent = Object.entries(form)
-      .map(([key, value]) => `<p><strong>${key}:</strong> ${value}</p>`)
+      .map(([key, value]) => {
+        const label = questionLabels[key] || key;
+        return `<p><strong>${label}</strong><br>${value}</p>`;
+      })
       .join('');
 
     await sendEmail({
-      to: 'bittus@scaleupsoftware.io', // your receiving email
+      to: ['williampulgarin2@gmail.com', 'bittus@scaleupsoftware.io']
       subject: "New Feedback Received",
       html: `<h2>New Feedback Submission</h2>${emailContent}`
     });
