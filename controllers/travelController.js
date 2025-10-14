@@ -27,7 +27,7 @@ const sendFeedbackForm = async (req, res) => {
       .join('');
 
     await sendEmail({
-      to: 'williampulgarin2@gmail.com.bittus@scaleupsoftware.io', // your receiving email
+      to: 'williampulgarin2@gmail.com,bittus@scaleupsoftware.io', // your receiving email
       subject: "New Feedback Received",
       html: `<h2>New Feedback Submission</h2>${emailContent}`
     });
