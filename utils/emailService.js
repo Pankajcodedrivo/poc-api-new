@@ -23,7 +23,7 @@ async function sendEmail({ to, subject, text, html }) {
     };
 
     const result = await sgMail.send(msg);
-    console.log("✅ Email sent successfully:", to);
+    console.log("✅ Email sent successfully:", result);
     return result;
   } catch (error) {
     console.error("❌ Error sending email:", error.response?.body || error.message);
